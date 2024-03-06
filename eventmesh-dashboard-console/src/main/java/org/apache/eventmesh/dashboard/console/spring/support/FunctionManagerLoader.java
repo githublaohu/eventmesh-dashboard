@@ -17,14 +17,20 @@
 
 package org.apache.eventmesh.dashboard.console.spring.support;
 
+import org.apache.eventmesh.dashboard.console.entity.topic.TopicEntity;
+import org.apache.eventmesh.dashboard.console.function.metadata.SyncDataService;
+import org.apache.eventmesh.dashboard.console.function.metadata.data.CenterMeta;
 import org.apache.eventmesh.dashboard.console.health.HealthService;
 import org.apache.eventmesh.dashboard.console.service.health.HealthDataService;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.eventmesh.dashboard.console.service.topic.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class FunctionManagerLoader {
@@ -35,6 +41,13 @@ public class FunctionManagerLoader {
 
     @Autowired
     private HealthDataService healthDataService;
+
+    @Autowired
+    private CenterService  centerService;
+
+
+    @Autowired
+    private TopicService topicService;
 
     @Bean
     public HealthService getHealthService() {
@@ -48,4 +61,35 @@ public class FunctionManagerLoader {
         functionManager.setHealthDataService(healthDataService);
         functionManager.initFunctionManager();
     }
+
+
+    SyncDataService<CenterMeta> createTopicSyncService(){
+        return new SyncDataService<CenterMeta>() {
+            @Override
+            public List<CenterMeta> syncsData() {
+                List<TopicEntity> topicEntityList = topicService.selectAll();
+                return null;
+            }
+
+            @Override
+            public String getUnique(CenterMeta centerMeta) {
+                return null;
+            }
+        };
+    }
+
+    SyncDataService<Object> createClusterSyncService(){
+        return new SyncDataService<CenterMeta>() {
+            @Override
+            public List<CenterMeta> syncsData() {
+                return centerService.selectAll();
+            }
+
+            @Override
+            public String getUnique(CenterMeta centerMeta) {
+                return null;
+            }
+        };
+    }
+
 }

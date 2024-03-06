@@ -42,8 +42,8 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupEntity> getGroupByClusterId(GroupEntity groupEntity) {
         return oprGroupMapper.selectGroup(groupEntity);
-
     }
+
 
     @EmLog(OprType = "add", OprTarget = "Group")
     @Override

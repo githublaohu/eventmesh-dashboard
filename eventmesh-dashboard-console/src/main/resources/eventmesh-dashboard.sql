@@ -117,7 +117,6 @@ CREATE TABLE `client`
     `create_time` timestamp           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `end_time`    timestamp           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '结束时间',
     `update_time` timestamp           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-
     PRIMARY KEY (`id`),
     INDEX `idx_cluster_id` (`cluster_id`)
 ) ENGINE = InnoDB
