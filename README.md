@@ -1,54 +1,88 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Apache EventMesh Dashboard
 
-## Getting Started
+[🌐 简体中文](README.zh-CN.md)
 
-First, run the development server:
+## Introduction
 
-```bash
-npm run dev
-# or
-yarn dev
+The EventMesh Dashboard is under development and will support functionalities such as Connection management, cluster health checks, etc. Feel free to reach out to the [EventMesh Assistant](https://github.com/apache/eventmesh?tab=readme-ov-file#community) to contribute.
+
+The Dashboard for EventMesh, maintained during v1.8.0 ~ v1.10.0, is a pure frontend project located at the [Next.js Dashboard branch](https://github.com/apache/eventmesh-dashboard/tree/nextjs-dashboard).
+
+Weekly development meeting documents for EventMesh Dashboard: https://docs.qq.com/doc/DQmhVbklUdGNNWGZi
+
+## Technical Architecture
+
+![](https://github.com/apache/eventmesh/assets/34571087/f61103a8-e9a4-419f-ab42-ae99feb4f431)
+
+### Environment
+
+- JDK 8/11
+- Maven 3.9.x
+- Spring Boot 2.7.x
+
+### Module Introduction
+
+1. eventmesh-dashboard-console: Code for business modules, invoking service interfaces.
+2. eventmesh-dashboard-observe: Code for monitoring modules.
+3. eventmesh-dashboard-core: Code for EventMesh Runtime, Meta, and related components, providing service implementations.
+4. eventmesh-dashboard-service: Common API interfaces, abstracting core functionalities.
+5. eventmesh-dashboard-common: Code for common modules.
+6. eventmesh-dashboard-view: Frontend code.
+
+## Auto Deploy EventMesh Dashboard
+
+When the repository code is updated, the script will build and run the EventMesh Dashboard based on the latest version of the code.
+
+### Usage
+
+```
+cd ~/service
+git clone https://github.com/apache/eventmesh-dashboard.git
+cd eventmesh-dashboard/deployment/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Getting Started with Docker
-
-Pull the image and run the container by following commands:
+Edit credentials:
 
 ```
-docker pull apache/eventmesh-dashboard:latest
+cp .env.example .env
+vim .env
+```
+
+Add task to crontab:
+
+```
+crontab -e
 ```
 
 ```
-docker run -d --name eventmesh-dashboard -p 8080:80 -t apache/eventmesh-dashboard:latest
+0 * * * * bash ~/service/eventmesh-dashboard/deployment/auto-deploy-eventmesh-dashboard.sh
 ```
 
-Open [http://localhost:8080](http://localhost:8080) in your browser to see the result.
+## Build
 
-You can also build a mirror of your own by executing the following command in the root of your git repository:
+### Build on source code
 
 ```
-docker build -t <your-name>/eventmesh-dashboard:latest -f docker/Dockerfile .
+cd eventmesh-dashboard
+./mvnw clean package
 ```
 
-## Learn More
+>TODO download mysql-connector-j manually
 
-To learn more about Next.js, take a look at the following resources:
+```
+java -DDB_ADDRESS=$DB_ADDRESS -DDB_USERNAME=$DB_USERNAME -DDB_PASSWORD=$DB_PASSWORD -jar eventmesh-dashboard-console/target/eventmesh-dashboard-console-0.0.1-SNAPSHOT.jar
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Build and Run with Docker
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+>To be updated
 
-## Deploy on Vercel
+```
+cd eventmesh-dashboard
+./gradlew clean bootJar
+docker build -t yourname/eventmesh-dashboard -f docker/Dockerfile .
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+docker run -d --name eventmesh-dashboard -p 8080:8080 yourname/eventmesh-dashboard
+```
