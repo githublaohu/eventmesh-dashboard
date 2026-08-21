@@ -154,23 +154,24 @@
         SELF : 从 操作触发，到 同步器加载数据，到 执行结果，
         以集群为主： 记录同步了那些数据就可以来
     -->
-    <!-- 这个目录有 加载同步执行对象信息， databases 操作 -->
-    <logger name="org.apache.eventmesh.dashboard.console.spring.support.metadata" level="debug">
+    <!-- 这个目录有 加载同步执行对象信息， databases 操作 debug -->
+    <logger name="org.apache.eventmesh.dashboard.console.spring.support.metadata" level="info">
         <appender-ref ref="sync"/>
         <appender-ref ref="syncError"/>
     </logger>
-    <logger name="org.apache.eventmesh.dashboard.core.metadata" level="trace">
+    <!-- trace -->
+    <logger name="org.apache.eventmesh.dashboard.core.metadata" level="info">
         <appender-ref ref="sync"/>
         <appender-ref ref="syncError"/>
     </logger>
-    <!-- 输出：同步执行结果 -->
-    <logger name="org.apache.eventmesh.dashboard.core.remoting.Remoting2Manage$RemotingService" level="debug">
+    <!-- 输出：同步执行结果 debug -->
+    <logger name="org.apache.eventmesh.dashboard.core.remoting.Remoting2Manage$RemotingService" level="trace">
         <appender-ref ref="sync"/>
         <appender-ref ref="syncError"/>
     </logger>
 
     <!-- 心跳 -->
-    <logger name="org.apache.eventmesh.dashboard.console.function.health" level="debug" additivity="false">
+    <logger name="org.apache.eventmesh.dashboard.console.function.health" level="info" additivity="false">
         <appender-ref ref="health"/>
         <appender-ref ref="healthError"/>
     </logger>

@@ -143,6 +143,7 @@ create table config
     config_value_range varchar(16)     not null comment '',
     start_version      varchar(64)     not null default '' comment '配置开始使用的版本',
     end_version        varchar(64)     not null default '' comment '配置结束使用的版本',
+    sync_status        varchar(16)     not null default 'ING' comment '',
     status             int             not null default 1 comment '0 关闭 1 开启 ',
     is_default         int             not null default 1,
     diff_type          int             not null default -1 comment '差异类型',
@@ -169,6 +170,7 @@ create table `topic`
     write_queue_num    int             not null default 8 comment '写队列数量',
     replication_factor int             not null default 0 comment '副本数量',
     `order`            int             not null default 0 comment '是否是定时队列',
+    sync_status        varchar(16)     not null default 'ING' comment '',
     `status`           int             not null default 1,
     `create_progress`  int             not null default 1 comment '0:创建成功，1：创建中，2：创建失败',
     `retention_ms`     bigint          not null default '-2' comment '保存时间，-2：未知，-1：无限制，>=0对应时间，单位ms',
@@ -176,7 +178,7 @@ create table `topic`
     `create_time`      timestamp       not null default current_timestamp comment '创建时间(尽量与topic实际创建时间一致)',
     `update_time`      timestamp       not null default current_timestamp on update current_timestamp comment '修改时间(尽量与topic实际创建时间一致)',
     `is_delete`        int             not null default '0',
-    unique key `uniq_cluster_phy_id_topic_name` (`cluster_id`, `topic_name`)
+    unique key `uniq_cluster_id_runtime_id_topic_name` (`cluster_id`,`runtime_id`, `topic_name`)
 ) comment ='topic信息表';
 
 drop table if exists `group`;
@@ -189,6 +191,7 @@ create table `group`
     name            varchar(192)    not null comment 'group名称',
     type            tinyint         not null comment 'group类型 0：consumer 1：producer',
     own_type        varchar(16)     not null default '' comment 'topic 类型。用户，broker，console，console',
+    sync_status        varchar(16)     not null default 'ING' comment '',
     state           varchar(64)     not null default '' comment '状态',
     create_time     timestamp       not null default current_timestamp comment '创建时间',
     update_time     timestamp       not null default current_timestamp on update current_timestamp comment '修改时间',
@@ -207,7 +210,7 @@ create table group_member
     topic_name      varchar(192)    not null default '' comment 'topic名称',
     group_name      varchar(192)    not null default '' comment 'group名称',
     eventmesh_user  varchar(192)    not null default '' comment 'eventmesh用户',
-    state           varchar(64)     not null default '' comment '状态',
+    sync_status        varchar(16)     not null default 'ING' comment '',
     create_time     timestamp       not null default current_timestamp comment '创建时间',
     update_time     timestamp       not null default current_timestamp on update current_timestamp comment '修改时间',
     status          int             not null default 1,
@@ -383,7 +386,7 @@ create table `operation_log`
 
 drop table if exists `connector`;
 create table `connector`
-(
+(x
     `id`          bigint unsigned primary key auto_increment comment 'id',
     `cluster_id`  bigint              not null default '-1' comment '集群id',
     `name`        varchar(512)        not null default '' comment 'connector名称',

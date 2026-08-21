@@ -45,12 +45,6 @@ spring:
       test-while-idle: true
       min-evictable-idle-time-millis: 300000
 
-logging:
-  level:
-    root: INFO
-    org.apache.eventmesh: INFO
-    org.apache.eventmesh.dashboard: INFO
-
 mybatis:
   type-aliases-package: org.apache.eventmesh.dashboard.console.entity
 
@@ -63,7 +57,20 @@ decoration:
 
 
 function:
-  enabled: false
+  enabled: true
+  enabledHealth: false
+  enabledReport: false
+  enabledSync: true
+  includeSyncType:
+    - TOPIC
+  health:
+    initialDelay: 20000
+    fixedDelay: 100000
+  sync:
+    initialDelay: 1000
+    fixedDelay: 1000
+  mockJvm: true
+
 
   reportConfig:
     url: jdbc:mysql://${DB_ADDRESS:localhost:3306}/eventmesh_dashboard?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
