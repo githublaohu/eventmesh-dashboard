@@ -1,5 +1,7 @@
 package org.apache.eventmesh.dashboard.console.utils.data.adaptation.type;
 
-public interface TopicAdaptation {
+import org.apache.eventmesh.dashboard.console.utils.data.adaptation.Adaptation;
+
+public interface TopicAdaptation<T, V> extends Adaptation<T, V> {
 
 }

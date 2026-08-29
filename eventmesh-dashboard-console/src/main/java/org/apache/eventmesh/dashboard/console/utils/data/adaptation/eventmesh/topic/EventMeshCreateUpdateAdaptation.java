@@ -9,11 +9,11 @@ import org.apache.eventmesh.dashboard.console.utils.data.adaptation.type.TopicAd
 /**
  * @author hahaha
  */
-public class RocketMQCreateUpdateAdaptation implements TopicAdaptation<TopicEntity, CreateTopicDTO>, RocketMQAdaptation<TopicEntity, CreateTopicDTO>,
+public class EventMeshCreateUpdateAdaptation implements TopicAdaptation<TopicEntity, CreateTopicDTO>, RocketMQAdaptation<TopicEntity, CreateTopicDTO>,
     UpdateAdaptation<TopicEntity, CreateTopicDTO> {
 
     @Override
-    public void adaptation(TopicEntity topicEntity, CreateTopicDTO createTopicDTO) {
+    public void handler(TopicEntity topicEntity, CreateTopicDTO createTopicDTO) {
 
     }
 }

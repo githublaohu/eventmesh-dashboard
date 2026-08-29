@@ -1,8 +1,9 @@
-package org.apache.eventmesh.dashboard.console.utils.data.adaptation.rocketmq;
+package org.apache.eventmesh.dashboard.console.utils.data.adaptation.rocketmq.topic;
 
 import org.apache.eventmesh.dashboard.console.entity.message.TopicEntity;
 import org.apache.eventmesh.dashboard.console.model.dto.topic.CreateTopicDTO;
 import org.apache.eventmesh.dashboard.console.utils.data.adaptation.operation.CreateAdaptation;
+import org.apache.eventmesh.dashboard.console.utils.data.adaptation.rocketmq.RocketMQAdaptation;
 import org.apache.eventmesh.dashboard.console.utils.data.adaptation.type.TopicAdaptation;
 
 /**
@@ -12,7 +13,7 @@ public class RocketMQCreateTopicAdaptation implements TopicAdaptation<TopicEntit
     CreateAdaptation<TopicEntity, CreateTopicDTO> {
 
     @Override
-    public void adaptation(TopicEntity topicEntity, CreateTopicDTO createTopicDTO) {
+    public void handler(TopicEntity topicEntity, CreateTopicDTO createTopicDTO) {
 
     }
 }

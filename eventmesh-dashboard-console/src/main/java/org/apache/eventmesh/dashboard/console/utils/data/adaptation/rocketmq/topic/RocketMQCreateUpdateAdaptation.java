@@ -13,7 +13,7 @@ public class RocketMQCreateUpdateAdaptation implements TopicAdaptation<TopicEnti
     CreateAdaptation<TopicEntity, CreateTopicDTO> {
 
     @Override
-    public void adaptation(TopicEntity topicEntity, CreateTopicDTO createTopicDTO) {
+    public void handler(TopicEntity topicEntity, CreateTopicDTO createTopicDTO) {
 
     }
 }

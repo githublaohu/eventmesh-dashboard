@@ -1,5 +1,7 @@
 package org.apache.eventmesh.dashboard.console.utils.data.adaptation.rocketmq;
 
-public interface RocketMQAdaptation {
+import org.apache.eventmesh.dashboard.console.utils.data.adaptation.Adaptation;
+
+public interface RocketMQAdaptation<T, V> extends Adaptation<T, V> {
 
 }

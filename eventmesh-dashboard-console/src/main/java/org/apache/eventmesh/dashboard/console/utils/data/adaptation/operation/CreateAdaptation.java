@@ -1,4 +1,6 @@
-package org.apache.eventmesh.dashboard.console.utils.data.adaptation;
+package org.apache.eventmesh.dashboard.console.utils.data.adaptation.operation;
+
+import org.apache.eventmesh.dashboard.console.utils.data.adaptation.Adaptation;
 
 
 /**
