@@ -1,11 +1,14 @@
-package org.apache.eventmesh.dashboard.console.utils.data.adaptation;
+package org.apache.eventmesh.dashboard.console.utils.data.adaptation.operation;
 
+
+import org.apache.eventmesh.dashboard.console.utils.data.adaptation.Adaptation;
 
 /**
  * @author hahaha
  */
 public interface CreateAdaptation<T, V> extends Adaptation<T, V> {
 
+    @Override
     default String operation() {
         return "create";
     }

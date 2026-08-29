@@ -51,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 组件类型，report名，数据类型，类名（因为采集模块），表名，默认展示类型，可以展示类型，
+ *
  */
 @SuppressWarnings("SqlSourceToSinkFlow")
 @Slf4j

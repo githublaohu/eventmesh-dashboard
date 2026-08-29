@@ -15,7 +15,7 @@ import lombok.Data;
  * @author hahaha
  */
 @Data
-public class ClusterFullMatedataDO {
+public class ClusterFullMetadataDO {
 
     private List<ClusterEntity> clusterEntityList;
 

@@ -19,6 +19,7 @@
 package org.apache.eventmesh.dashboard.core.remoting.jvm.runtime;
 
 
+import org.apache.eventmesh.dashboard.common.enums.MetadataType;
 import org.apache.eventmesh.dashboard.common.model.remoting.offset.GetOffsetRequest;
 import org.apache.eventmesh.dashboard.common.model.remoting.offset.GetOffsetResult;
 import org.apache.eventmesh.dashboard.common.model.remoting.offset.ResetOffsetRequest;
@@ -35,6 +36,11 @@ public class JvmOffsetRemotingService extends AbstractJvmRemotingService impleme
 
     @Override
     public ResetOffsetResult resetOffset(ResetOffsetRequest resetOffsetRequest) {
+        return null;
+    }
+
+    @Override
+    protected MetadataType metadataType() {
         return null;
     }
 }

@@ -47,6 +47,9 @@ import org.apache.eventmesh.dashboard.service.remoting.TopicRemotingService;
 
 import lombok.Getter;
 
+/**
+ * @author hahaha
+ */
 @Getter
 public enum DatabaseAndMetadataType {
 

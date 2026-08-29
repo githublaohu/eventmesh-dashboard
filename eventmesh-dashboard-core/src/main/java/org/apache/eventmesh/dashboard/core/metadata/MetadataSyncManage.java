@@ -34,6 +34,7 @@ import org.apache.eventmesh.dashboard.core.metadata.result.MetadataSyncResultHan
 import org.apache.eventmesh.dashboard.core.remoting.Remoting2Manage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nullable;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,6 +94,7 @@ public class MetadataSyncManage {
     /**
      * db
      */
+    @Getter
     private final Map<MetadataType, SyncMetadataCreateFactory> syncMetadataCreateFactoryMap = new HashMap<>();
 
 
@@ -122,6 +125,7 @@ public class MetadataSyncManage {
         this.init(initialDelay, period, databaseAndMetadataMapperMap);
     }
 
+    @SuppressWarnings("unchecked")
     public void init(Integer initialDelay, Integer period, Map<Class<?>, DatabaseAndMetadataMapper> databaseAndMetadataMapperMap) {
 
         dataMetadataHandlerList.forEach((v) -> {
@@ -199,21 +203,6 @@ public class MetadataSyncManage {
         });
     }
 
-
-    private void persistence() {
-        long startTime = System.currentTimeMillis();
-        try {
-            this.metadataSyncResultHandler.persistence();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            if (log.isTraceEnabled()) {
-                log.trace("complete persistence, time {} ", (System.currentTimeMillis() - startTime));
-            }
-        }
-    }
-
-
     public void register(BaseSyncBase baseSyncBase) {
         if (Objects.equals(baseSyncBase.getTrusteeshipType(), ClusterTrusteeshipType.NO_TRUSTEESHIP)
             || Objects.equals(baseSyncBase.getTrusteeshipType(), ClusterTrusteeshipType.NOT)
@@ -254,6 +243,20 @@ public class MetadataSyncManage {
         metadataSyncResult.setBaseSyncBase(baseSyncBase);
         metadataSyncResultList.add(metadataSyncResult);
         return metadataSyncResult;
+    }
+
+
+    private void persistence() {
+        long startTime = System.currentTimeMillis();
+        try {
+            this.metadataSyncResultHandler.persistence();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            if (log.isTraceEnabled()) {
+                log.trace("complete persistence, time {} ", (System.currentTimeMillis() - startTime));
+            }
+        }
     }
 
     private void createMetadataSyncWrapper(List<MetadataSyncWrapper> metadataSyncWrappers, MetadataSyncConfig metadataSyncConfig) {

@@ -80,14 +80,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClusterCycleController {
 
     @Autowired
-    private RuntimeService runtimeService;
-
-    @Autowired
-    private ClusterService clusterService;
-
-    @Autowired
     private CreateRuntimeByDeployScriptHandler createRuntimeByDeployScriptHandler;
-
 
     @Autowired
     private CreateClusterByDeployScriptHandler createClusterByDeployScriptHandler;
@@ -112,31 +105,6 @@ public class ClusterCycleController {
     @PostMapping("createRuntimeByDeployScript")
     public void createRuntimeByDeployScript(@RequestBody @Validated CreateRuntimeByDeployScriptDTO createRuntimeByDeployScriptDTO) {
         this.createRuntimeByDeployScriptHandler.handler(createRuntimeByDeployScriptDTO);
-    }
-
-    /**
-     *
-     */
-    @PostMapping("createClusterByServiceAddress")
-    public void createClusterByServiceAddress(CreateClusterByServiceAddressDTO dto) {
-
-        if (Objects.equals(dto.getClusterType(), ClusterType.STORAGE_ROCKETMQ_CLUSTER)) {
-            dto.setClusterType(null);
-        }
-
-    }
-
-
-    public void createClusterByFullAddress() {
-
-    }
-
-    public void createClusterByMetaAddress() {
-
-    }
-
-    public void createClusterByRuntimeAddress() {
-
     }
 
     @PostMapping("createClusterByDeployScript")

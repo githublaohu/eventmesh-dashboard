@@ -77,7 +77,7 @@ public interface HealthCheckResultMapper {
                        )
                    </foreach>
                    on duplicate key update
-                   result = values(result), result_desc = values(result_desc)
+                   result = values(result), result_desc = values(result_desc),
             </script>
         """)
     void batchInsert(List<HealthCheckResultEntity> healthCheckResultEntityList);

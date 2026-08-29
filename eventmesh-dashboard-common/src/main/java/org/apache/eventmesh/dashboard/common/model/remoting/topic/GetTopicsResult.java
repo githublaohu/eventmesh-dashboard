@@ -18,11 +18,12 @@
 
 package org.apache.eventmesh.dashboard.common.model.remoting.topic;
 
+import org.apache.eventmesh.dashboard.common.model.metadata.TopicMetadata;
 import org.apache.eventmesh.dashboard.common.model.remoting.GlobalResult;
 
 /**
  *
  */
-public class GetTopicsResult extends GlobalResult<GetTopicsResponse> {
+public class GetTopicsResult extends GlobalResult<TopicMetadata> {
 
 }

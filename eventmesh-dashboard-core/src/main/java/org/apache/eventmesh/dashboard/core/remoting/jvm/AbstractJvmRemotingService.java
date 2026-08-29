@@ -22,8 +22,11 @@ import org.apache.eventmesh.dashboard.common.annotation.RemotingServiceMapper;
 import org.apache.eventmesh.dashboard.common.enums.ClusterType;
 import org.apache.eventmesh.dashboard.core.remoting.AbstractRemotingService;
 
+/**
+ * @author hahaha
+ */
 @RemotingServiceMapper(clusterType = ClusterType.STORAGE_JVM_BROKER)
-public abstract class AbstractJvmRemotingService extends AbstractRemotingService<Object> {
+public abstract class AbstractJvmRemotingService extends AbstractJvmService<Object> {
 
 
 }
