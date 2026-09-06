@@ -21,20 +21,20 @@ package org.apache.eventmesh.dashboard.console.service.cluster.impl;
 import org.apache.eventmesh.dashboard.common.enums.DeployStatusType;
 import org.apache.eventmesh.dashboard.console.entity.cluster.ClusterEntity;
 import org.apache.eventmesh.dashboard.console.entity.cluster.RuntimeEntity;
-import org.apache.eventmesh.dashboard.console.mapper.cluster.ClusterLifecycleMapper;
+import org.apache.eventmesh.dashboard.console.mapper.cluster.ClusterMapper;
 import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleDTO;
-import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleVO;
 import org.apache.eventmesh.dashboard.console.service.cluster.ClusterLifecycleService;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 
-/** Serializes lifecycle changes and rolls back all writes on conflict. */
+/** Updates lifecycle state conditionally and rolls back all writes on conflict. */
 @Service
 @Slf4j
 public class ClusterLifecycleServiceImpl implements ClusterLifecycleService {
@@ -55,26 +55,23 @@ public class ClusterLifecycleServiceImpl implements ClusterLifecycleService {
         DeployStatusType.PAUSE_FAIL, DeployStatusType.PAUSE_FULL_FAIL,
         DeployStatusType.UNINSTALL_FAIL, DeployStatusType.UNINSTALL_FAILED,
         DeployStatusType.RESOURCE_APPLY_FAILED, DeployStatusType.CHECKING_FAILED);
-    private final ClusterLifecycleMapper mapper;
-
-    public ClusterLifecycleServiceImpl(ClusterLifecycleMapper mapper) {
-        this.mapper = mapper;
-    }
+    @Autowired
+    private ClusterMapper mapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ClusterLifecycleVO submit(ClusterLifecycleDTO request, DeployStatusType target) {
+    public int submit(ClusterLifecycleDTO request, DeployStatusType target) {
         if (request == null || request.getOrganizationId() == null || request.getOrganizationId() <= 0
             || request.getClusterId() == null || request.getClusterId() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid cluster or organization ID");
         }
         Set<DeployStatusType> allowed = allowedStatuses(target);
-        ClusterEntity cluster = mapper.lockCluster(request);
+        ClusterEntity cluster = mapper.selectCluster(request);
         if (cluster == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cluster not found in this organization");
         }
         validateStatus(cluster.getDeployStatusType(), allowed);
-        List<RuntimeEntity> runtimes = mapper.lockRuntimes(request);
+        List<RuntimeEntity> runtimes = mapper.selectRuntimes(request);
         for (RuntimeEntity runtime : runtimes) {
             validateStatus(runtime.getDeployStatusType(), allowed);
         }
@@ -84,7 +81,7 @@ public class ClusterLifecycleServiceImpl implements ClusterLifecycleService {
         }
         log.info("Cluster lifecycle request persisted: organizationId={}, clusterId={}, target={}, runtimeCount={}",
             request.getOrganizationId(), request.getClusterId(), target, runtimes.size());
-        return new ClusterLifecycleVO(request.getClusterId(), target, runtimes.size());
+        return runtimes.size();
     }
 
     private Set<DeployStatusType> allowedStatuses(DeployStatusType target) {

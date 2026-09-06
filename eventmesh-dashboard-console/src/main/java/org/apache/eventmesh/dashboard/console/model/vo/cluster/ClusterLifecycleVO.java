@@ -16,15 +16,13 @@
  */
 
 
-package org.apache.eventmesh.dashboard.console.model.deploy;
+package org.apache.eventmesh.dashboard.console.model.vo.cluster;
 
 import org.apache.eventmesh.dashboard.common.enums.DeployStatusType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /** Acknowledges persistence only, not completion of the deployment operation. */
 @Data
-@AllArgsConstructor
 public class ClusterLifecycleVO {
     private Long clusterId;
     private DeployStatusType deployStatusType;

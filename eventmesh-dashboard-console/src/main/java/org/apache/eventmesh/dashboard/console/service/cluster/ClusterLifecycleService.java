@@ -20,9 +20,8 @@ package org.apache.eventmesh.dashboard.console.service.cluster;
 
 import org.apache.eventmesh.dashboard.common.enums.DeployStatusType;
 import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleDTO;
-import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleVO;
 
 /** Persists a pending lifecycle operation without invoking deployment. */
 public interface ClusterLifecycleService {
-    ClusterLifecycleVO submit(ClusterLifecycleDTO request, DeployStatusType target);
+    int submit(ClusterLifecycleDTO request, DeployStatusType target);
 }

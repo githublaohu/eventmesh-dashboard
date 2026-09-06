@@ -19,7 +19,8 @@
 package org.apache.eventmesh.dashboard.console.service.cluster;
 
 import org.apache.eventmesh.dashboard.common.enums.DeployStatusType;
-import org.apache.eventmesh.dashboard.console.mapper.cluster.ClusterLifecycleMapper;
+import org.apache.eventmesh.dashboard.console.controller.deploy.handler.ClusterLifecycleHandler;
+import org.apache.eventmesh.dashboard.console.mapper.cluster.ClusterMapper;
 import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleDTO;
 import org.apache.eventmesh.dashboard.console.service.cluster.impl.ClusterLifecycleServiceImpl;
 import javax.sql.DataSource;
@@ -64,27 +65,36 @@ class ClusterLifecycleServiceTest {
             factory.setDataSource(source);
             org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
             configuration.setMapUnderscoreToCamelCase(true);
-            configuration.addMapper(ClusterLifecycleMapper.class);
+            configuration.addMapper(ClusterMapper.class);
             factory.setConfiguration(configuration);
             return factory.getObject();
         }
         @Bean
-        ClusterLifecycleMapper mapper(SqlSessionFactory factory) {
-            return new SqlSessionTemplate(factory).getMapper(ClusterLifecycleMapper.class);
+        ClusterMapper mapper(SqlSessionFactory factory) {
+            return org.mockito.Mockito.spy(new SqlSessionTemplate(factory).getMapper(ClusterMapper.class));
         }
         @Bean
-        ClusterLifecycleService service(ClusterLifecycleMapper mapper) {
-            return new ClusterLifecycleServiceImpl(mapper);
+        ClusterLifecycleHandler lifecycleHandler() {
+            return new ClusterLifecycleHandler();
+        }
+        @Bean
+        ClusterLifecycleService service() {
+            return new ClusterLifecycleServiceImpl();
         }
     }
     @Autowired
     private ClusterLifecycleService service;
     @Autowired
+    private ClusterLifecycleHandler lifecycleHandler;
+    @Autowired
     private DataSource source;
+    @Autowired
+    private ClusterMapper mapper;
     private JdbcTemplate jdbc;
 
     @BeforeEach
     void prepare() {
+        org.mockito.Mockito.reset(mapper);
         jdbc = new JdbcTemplate(source);
         jdbc.execute("DROP ALL OBJECTS");
         for (String table : List.of("cluster", "runtime")) {
@@ -107,7 +117,7 @@ class ClusterLifecycleServiceTest {
     }
     @Test
     void pausePersistsPendingAndLeavesOtherClusterUntouched() {
-        assertEquals(1, service.submit(request(), DeployStatusType.PAUSE).getRuntimeCount());
+        assertEquals(1, service.submit(request(), DeployStatusType.PAUSE));
         assertEquals("PAUSE", status("cluster", 1));
         assertEquals("PAUSE", status("runtime", 10));
         assertEquals("CREATE_SUCCESS", status("runtime", 20));
@@ -150,6 +160,14 @@ class ClusterLifecycleServiceTest {
     }
     @Test
     void concurrentSubmissionsOnlyAcceptOne() throws Exception {
+        // Both transactions must read the same old state before either performs its conditional update.
+        var readers = new java.util.concurrent.CountDownLatch(2);
+        org.mockito.Mockito.doAnswer(invocation -> {
+            Object result = invocation.callRealMethod();
+            readers.countDown();
+            assertTrue(readers.await(5, java.util.concurrent.TimeUnit.SECONDS));
+            return result;
+        }).when(mapper).selectRuntimes(org.mockito.ArgumentMatchers.any());
         var executor = Executors.newFixedThreadPool(2);
         try {
             Callable<Boolean> submit = () -> {
@@ -167,20 +185,45 @@ class ClusterLifecycleServiceTest {
         }
     }
     @Test
+    void staleStateCannotOverwriteAnotherOperation() {
+        jdbc.update("UPDATE cluster SET deploy_status_type = 'UNINSTALL' WHERE id = 1");
+        assertEquals(0, mapper.updateCluster(request(), DeployStatusType.CREATE_SUCCESS, DeployStatusType.PAUSE));
+        assertEquals("UNINSTALL", status("cluster", 1));
+        jdbc.update("UPDATE runtime SET deploy_status_type = 'UNINSTALL' WHERE id = 10");
+        assertEquals(0, mapper.updateRuntime(request(), 10L, DeployStatusType.CREATE_SUCCESS, DeployStatusType.PAUSE));
+        assertEquals("UNINSTALL", status("runtime", 10));
+    }
+
+    @Test
+    void runtimeConditionalUpdateConflictRollsBackCluster() {
+        org.mockito.Mockito.doReturn(0).when(mapper).updateRuntime(
+            org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.eq(10L),
+            org.mockito.ArgumentMatchers.eq(DeployStatusType.CREATE_SUCCESS), org.mockito.ArgumentMatchers.eq(DeployStatusType.PAUSE));
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+            () -> service.submit(request(), DeployStatusType.PAUSE));
+        assertEquals(org.springframework.http.HttpStatus.CONFLICT, exception.getStatus());
+        assertEquals("CREATE_SUCCESS", status("cluster", 1));
+        assertEquals("CREATE_SUCCESS", status("runtime", 10));
+    }
+
+    @Test
     void emptyClusterAndInvalidAction() {
         jdbc.update("DELETE FROM runtime WHERE cluster_id = 1");
         assertThrows(ResponseStatusException.class, () -> service.submit(request(), DeployStatusType.CREATE));
-        assertEquals(0, service.submit(request(), DeployStatusType.PAUSE).getRuntimeCount());
+        assertEquals(0, service.submit(request(), DeployStatusType.PAUSE));
     }
     @Test
     void httpEndpointsValidateAndAcknowledgePersistence() throws Exception {
-        var mvc = org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup(
-            new org.apache.eventmesh.dashboard.console.controller.deploy.ClusterLifecycleController(service)).build();
+        var controller = new org.apache.eventmesh.dashboard.console.controller.deploy.ClusterCycleController();
+        org.springframework.test.util.ReflectionTestUtils.setField(controller, "clusterLifecycleHandler", lifecycleHandler);
+        var mvc = org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup(controller).build();
         String body = "{\"organizationId\":1,\"clusterId\":1}";
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(
             "/organization/clusterCycleDeploy/pauseCluster").contentType("application/json").content(body))
             .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk())
-            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.deployStatusType").value("PAUSE"));
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.deployStatusType").value("PAUSE"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.clusterId").value(1))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.runtimeCount").value(1));
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(
             "/organization/clusterCycleDeploy/pauseCluster").contentType("application/json").content(body))
             .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isConflict());

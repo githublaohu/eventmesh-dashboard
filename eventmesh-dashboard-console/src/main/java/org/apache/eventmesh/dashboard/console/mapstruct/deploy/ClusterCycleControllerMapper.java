@@ -18,6 +18,9 @@
 
 package org.apache.eventmesh.dashboard.console.mapstruct.deploy;
 
+import org.apache.eventmesh.dashboard.common.enums.DeployStatusType;
+import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleDTO;
+import org.apache.eventmesh.dashboard.console.model.vo.cluster.ClusterLifecycleVO;
 import org.apache.eventmesh.dashboard.console.entity.cluster.ClusterEntity;
 import org.apache.eventmesh.dashboard.console.entity.cluster.RuntimeEntity;
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateClusterByDeployScriptDO;
@@ -25,6 +28,7 @@ import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateRuntimeB
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateRuntimeByOnlyDataDO;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -42,5 +46,10 @@ public interface ClusterCycleControllerMapper {
     ClusterEntity createClusterByDeployScript(CreateClusterByDeployScriptDO createClusterByDeployScriptDO);
 
     RuntimeEntity createRuntimeByDeployScript(CreateRuntimeByDeployScriptDTO createRuntimeByDeployScriptDTO);
+
+    @Mapping(target = "clusterId", source = "request.clusterId")
+    @Mapping(target = "deployStatusType", source = "target")
+    @Mapping(target = "runtimeCount", source = "runtimeCount")
+    ClusterLifecycleVO toClusterLifecycleVO(ClusterLifecycleDTO request, DeployStatusType target, int runtimeCount);
 
 }

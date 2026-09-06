@@ -23,14 +23,15 @@ import org.apache.eventmesh.dashboard.console.controller.deploy.create.CreateClu
 import org.apache.eventmesh.dashboard.console.controller.deploy.create.CreateClusterByDeployScriptHandler;
 import org.apache.eventmesh.dashboard.console.controller.deploy.create.CreateClusterByFullMetadataHandler;
 import org.apache.eventmesh.dashboard.console.controller.deploy.create.CreateRuntimeByDeployScriptHandler;
+import org.apache.eventmesh.dashboard.console.controller.deploy.handler.ClusterLifecycleHandler;
+import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleDTO;
+import org.apache.eventmesh.dashboard.console.model.vo.cluster.ClusterLifecycleVO;
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateClusterByCopyDTO;
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateClusterByDeployScriptDO;
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateClusterByFullMetadataDTO;
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateClusterByServiceAddressDTO;
 import org.apache.eventmesh.dashboard.console.model.deploy.create.CreateRuntimeByDeployScriptDTO;
 import org.apache.eventmesh.dashboard.console.model.dto.cluster.VerifyNameDTO;
-import org.apache.eventmesh.dashboard.console.service.cluster.ClusterService;
-import org.apache.eventmesh.dashboard.console.service.cluster.RuntimeService;
 
 import java.util.Objects;
 
@@ -80,6 +81,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClusterCycleController {
 
     @Autowired
+    private ClusterLifecycleHandler clusterLifecycleHandler;
+
+    @Autowired
     private CreateRuntimeByDeployScriptHandler createRuntimeByDeployScriptHandler;
 
     @Autowired
@@ -123,5 +127,20 @@ public class ClusterCycleController {
     @PostMapping("createClusterByFullMetadata")
     public void createClusterByFullMetadata(@RequestBody @Validated CreateClusterByFullMetadataDTO dto) {
         this.createClusterByFullMetadataHandler.handler(dto);
+    }
+
+    @PostMapping("pauseCluster")
+    public ClusterLifecycleVO pauseCluster(@RequestBody @Validated ClusterLifecycleDTO request) {
+        return this.clusterLifecycleHandler.pause(request);
+    }
+
+    @PostMapping("resumeCluster")
+    public ClusterLifecycleVO resumeCluster(@RequestBody @Validated ClusterLifecycleDTO request) {
+        return this.clusterLifecycleHandler.resume(request);
+    }
+
+    @PostMapping("uninstallCluster")
+    public ClusterLifecycleVO uninstallCluster(@RequestBody @Validated ClusterLifecycleDTO request) {
+        return this.clusterLifecycleHandler.uninstall(request);
     }
 }

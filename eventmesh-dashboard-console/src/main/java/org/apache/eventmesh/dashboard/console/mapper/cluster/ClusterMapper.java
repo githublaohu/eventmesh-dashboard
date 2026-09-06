@@ -18,13 +18,17 @@
 
 package org.apache.eventmesh.dashboard.console.mapper.cluster;
 
+import org.apache.eventmesh.dashboard.common.enums.DeployStatusType;
 import org.apache.eventmesh.dashboard.console.entity.cluster.ClusterEntity;
+import org.apache.eventmesh.dashboard.console.entity.cluster.RuntimeEntity;
+import org.apache.eventmesh.dashboard.console.model.deploy.ClusterLifecycleDTO;
 import org.apache.eventmesh.dashboard.console.model.ClusterIdDTO;
 import org.apache.eventmesh.dashboard.console.model.QO.cluster.QueryRelationClusterByClusterIdListAndTypeQO;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -180,4 +184,34 @@ public interface ClusterMapper {
     Integer updateNumByClusterId(ClusterEntity clusterEntity);
 
 
+
+    @Select("""
+        SELECT id, deploy_status_type FROM cluster
+        WHERE id = #{clusterId} AND organization_id = #{organizationId}
+          AND is_delete = 0 AND status = 1
+        """)
+    ClusterEntity selectCluster(ClusterLifecycleDTO request);
+
+    @Select("""
+        SELECT id, deploy_status_type FROM runtime
+        WHERE cluster_id = #{clusterId} AND organization_id = #{organizationId}
+          AND is_delete = 0 AND status = 1 ORDER BY id
+        """)
+    List<RuntimeEntity> selectRuntimes(ClusterLifecycleDTO request);
+
+    @Update("""
+        UPDATE cluster SET deploy_status_type = #{target}, update_time = CURRENT_TIMESTAMP
+        WHERE id = #{request.clusterId} AND organization_id = #{request.organizationId}
+          AND deploy_status_type = #{previous} AND is_delete = 0 AND status = 1
+        """)
+    int updateCluster(@Param("request") ClusterLifecycleDTO request,
+        @Param("previous") DeployStatusType previous, @Param("target") DeployStatusType target);
+
+    @Update("""
+        UPDATE runtime SET deploy_status_type = #{target}, update_time = CURRENT_TIMESTAMP
+        WHERE id = #{id} AND cluster_id = #{request.clusterId} AND organization_id = #{request.organizationId}
+          AND deploy_status_type = #{previous} AND is_delete = 0 AND status = 1
+        """)
+    int updateRuntime(@Param("request") ClusterLifecycleDTO request, @Param("id") Long id,
+        @Param("previous") DeployStatusType previous, @Param("target") DeployStatusType target);
 }
