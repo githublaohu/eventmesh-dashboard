@@ -130,7 +130,7 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.2.0-M1</version>
+            <version>6.1.0</version>
         </dependency>
 
         <dependency>
@@ -207,6 +207,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>5.2.0</version> <!-- 根据项目要求选择版本 -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.testable</groupId>
+            <artifactId>testable-all</artifactId>
+            <version>0.7.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>

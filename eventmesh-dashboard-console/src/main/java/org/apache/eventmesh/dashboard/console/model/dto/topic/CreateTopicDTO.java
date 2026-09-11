@@ -30,7 +30,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * TODO this class is copied from storage plugin, needs update
- * @author hahaha
+ * 
  */
 
 @Data

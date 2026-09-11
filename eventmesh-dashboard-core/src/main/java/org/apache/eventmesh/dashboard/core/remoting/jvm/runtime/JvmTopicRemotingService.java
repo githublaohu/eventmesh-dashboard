@@ -30,9 +30,7 @@ import org.apache.eventmesh.dashboard.service.remoting.TopicRemotingService;
 import java.util.List;
 
 
-/**
- * @author hahaha
- */
+
 public class JvmTopicRemotingService extends AbstractJvmRemotingService implements TopicRemotingService {
 
     @Override
@@ -53,7 +51,7 @@ public class JvmTopicRemotingService extends AbstractJvmRemotingService implemen
 
     @Override
     public GetTopicsResult getAllTopics(GetTopics2Request getTopicsRequest) {
-        return this.randomUpdateMockDatabaseData(List.of("topicName"), this.t(new GetTopicsResult()));
+        return this.randomUpdateMockDatabaseData(List.of("topicName"), this.tt(new GetTopicsResult()));
     }
 
     @Override

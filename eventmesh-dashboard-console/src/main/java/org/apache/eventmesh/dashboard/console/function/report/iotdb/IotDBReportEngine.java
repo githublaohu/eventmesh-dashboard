@@ -260,7 +260,7 @@ public class IotDBReportEngine extends AbstractReportEngine {
 
     @Override
     public void batchInsert(String tableName, List<Object> data) {
-        String sql = this.buildSql(tableName, ReportViewType.INSERT.getName(), (Object) data);
+        String sql = this.buildSql(tableName, ReportViewType.INSERT.getName(), data);
         this.execute(sql);
     }
 

@@ -58,7 +58,6 @@ import lombok.extern.slf4j.Slf4j;
  *          -> createDataMetadataHandler 获得 runtime 或则 cluster 维度数据，
  *              在写入 runtime 1000个节点，进行一千次db操作， db直接费了。
  * </pre>
- * @author hahaha
  */
 @Slf4j
 public class SyncMetadataCreateFactory {

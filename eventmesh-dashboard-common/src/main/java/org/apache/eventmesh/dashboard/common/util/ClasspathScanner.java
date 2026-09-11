@@ -126,7 +126,7 @@ public class ClasspathScanner {
         if (this.allSubDirectory) {
             stringBuffer.append("/**");
         }
-        /**
+        /*
          *  SDK*.class
          */
         if (Objects.isNull(this.designation)) {

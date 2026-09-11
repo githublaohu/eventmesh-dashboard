@@ -34,7 +34,6 @@ import org.apache.eventmesh.dashboard.core.metadata.result.MetadataSyncResultHan
 import org.apache.eventmesh.dashboard.core.remoting.Remoting2Manage;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

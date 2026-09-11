@@ -53,9 +53,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 
-/**
- * @author hahaha
- */
+
 @Slf4j
 public class Remoting2Manage {
 
@@ -286,7 +284,8 @@ public class Remoting2Manage {
                 arg = this.buildRequest(methodMapper, object);
                 if (log.isTraceEnabled()) {
                     log.trace(
-                        "#remoting manage , index {} Request metadata is {} method is {}  action is {} clusterId is{} runtime is {}, id is {} Unique is {} \n data is {}",
+                        "#remoting manage , index {} Request metadata is {} method is {}  action is {} clusterId is{} runtime is {},"
+                        + " id is {} Unique is {} \n data is {}",
                         index,
                         wrapper.remotingServiceType.getSimpleName(),
                         methodMapper.targetMethodName,
@@ -301,7 +300,10 @@ public class Remoting2Manage {
 
                 if (log.isTraceEnabled()) {
                     log.trace(
-                        "#remoting manage ,result  {} index {} Response metadata is {} method is {}  action is {} clusterId is{} runtime is {}, id is {} Unique is {} \n Result is {}",
+                        """
+                        #remoting manage ,result  {} index {} Response metadata is {} method is {}  action is {} clusterId is{} runtime is {},
+                         id is {} Unique is {} \n Result is {}
+                        """,
                         Objects.isNull(result) ? "success" : result.getCode() != 200 ? "error" : "success",
                         index,
                         wrapper.remotingServiceType.getSimpleName(),
@@ -317,7 +319,8 @@ public class Remoting2Manage {
                 exception = e;
                 if (log.isTraceEnabled()) {
                     log.trace(
-                        "#remoting manage , result error  index {} Response metadata is {} method is {}  action is {} clusterId is{} runtime is {}, id is {} Unique is {} \n Result is {}",
+                        "#remoting manage , result error  index {} Response metadata is {} method is {}  action is {} clusterId is{} "
+                        + " runtime is {}, id is {} Unique is {} \n Result is {}",
                         index,
                         wrapper.remotingServiceType.getSimpleName(),
                         methodMapper.targetMethodName,

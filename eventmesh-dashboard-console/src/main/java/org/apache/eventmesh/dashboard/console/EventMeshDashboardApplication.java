@@ -25,9 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author hahaha
- */
+
 @Slf4j
 @SpringBootApplication
 @EnableScheduling
