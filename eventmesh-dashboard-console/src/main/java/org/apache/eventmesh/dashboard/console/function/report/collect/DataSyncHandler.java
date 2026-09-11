@@ -159,6 +159,7 @@ public class DataSyncHandler {
                 log.error("DataSyncHandlerWrapper timeout, cluster id is {} cluster type is {}",
                     restoreData.getCollectMetadata().getClusterId(), restoreData.getCollectMetadata().getClusterType());
             }
+            // TODO 我赌，时间差，可见性到位了
             restoreDataList.add(restoreData.getIndex(), restoreData);
             if (this.atomicInteger.decrementAndGet() == 0) {
                 LocalDateTime now = LocalDateTime.now();

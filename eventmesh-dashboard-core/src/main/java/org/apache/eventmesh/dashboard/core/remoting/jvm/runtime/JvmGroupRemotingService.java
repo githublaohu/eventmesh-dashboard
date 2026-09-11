@@ -41,6 +41,6 @@ public class JvmGroupRemotingService extends AbstractJvmRemotingService implemen
 
     @Override
     protected MetadataType metadataType() {
-        return null;
+        return MetadataType.GROUP;
     }
 }

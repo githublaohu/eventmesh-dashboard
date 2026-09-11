@@ -68,12 +68,13 @@ public class DBRemotingResultHook implements RemotingResultHook {
     private DataSource dataSource;
 
     {
+        // TODO
         this.buildSqlMetadataWrapper(RuntimeEntity.class, RuntimeMetadata.class, "runtime");
         this.buildSqlMetadataWrapper(TopicEntity.class, TopicMetadata.class, "topic");
-        this.buildSqlMetadataWrapper(TopicOffsetEntity.class, TopicOffsetMetadata.class, "");
-        this.buildSqlMetadataWrapper(ConsumeOffsetEntity.class, ConsumeOffsetMetadata.class, "group_member");
+        this.buildSqlMetadataWrapper(TopicOffsetEntity.class, TopicOffsetMetadata.class, "topic_offset");
+        this.buildSqlMetadataWrapper(ConsumeOffsetEntity.class, ConsumeOffsetMetadata.class, "consume_offset");
         this.buildSqlMetadataWrapper(GroupEntity.class, GroupMetadata.class, "group");
-        this.buildSqlMetadataWrapper(GroupMemberEntity.class, GroupMemberMetadata.class, "");
+        this.buildSqlMetadataWrapper(GroupMemberEntity.class, GroupMemberMetadata.class, "group_member");
         this.buildSqlMetadataWrapper(ConfigEntity.class, ConfigMetadata.class, "config");
         this.buildSqlMetadataWrapper(NetConnectionEntity.class, NetConnectionMetadata.class, "net_connection");
 

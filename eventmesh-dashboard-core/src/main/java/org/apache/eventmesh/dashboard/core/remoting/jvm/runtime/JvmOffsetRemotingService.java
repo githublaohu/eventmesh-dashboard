@@ -41,6 +41,6 @@ public class JvmOffsetRemotingService extends AbstractJvmRemotingService impleme
 
     @Override
     protected MetadataType metadataType() {
-        return null;
+        return MetadataType.TOPIC_OFFSET;
     }
 }
